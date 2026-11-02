@@ -11,10 +11,10 @@ body.strobe-off::before { opacity: 0; }
 .brand-mark { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #191919; font-weight: 800; font-size: 1.25rem; box-shadow: 0 10px 28px var(--shadow); }
 .brand h1 { margin: 0; font-size: clamp(1.5rem, 4vw, 2rem); }
 .header-actions { display: flex; align-items: center; gap: 8px; }
-.icon-button { display: inline-grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(255,255,255,.1); border-radius: 15px; background: rgba(255,255,255,.07); color: var(--text); }
-.icon-button svg, .mode-btn svg, .slider-heading svg, .power-button svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-button { display: inline-grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(255,255,255,.1); border-radius: 15px; background: rgba(255,255,255,.07); color: var(--text); touch-action: manipulation; cursor: pointer; }
+.icon-button svg, .mode-btn svg, .slider-heading svg, .power-button svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .hidden { display: none !important; }
-.network-indicator { position: fixed; z-index: 4; top: max(18px, env(safe-area-inset-top)); right: 18px; width: 28px; height: 28px; color: #ff6572; transition: color 160ms ease; }
+.network-indicator { position: fixed; z-index: 4; top: max(18px, env(safe-area-inset-top)); right: 18px; width: 28px; height: 28px; color: #ff6572; transition: color 160ms ease; pointer-events: none; }
 .network-indicator svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .network-indicator.online { color: #43d17d; }
 .network-indicator.offline { color: #ff6572; }
@@ -23,19 +23,19 @@ body.strobe-off::before { opacity: 0; }
 .scene { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 24px; position: relative; }
 .torch-glow { position: absolute; inset: 15% 12%; border-radius: 28px; background: radial-gradient(circle, rgba(255,245,182,.3), transparent 65%); filter: blur(26px); opacity: 0; transition: opacity 180ms ease; pointer-events: none; }
 body.torch-on .torch-glow { opacity: .8; }
-.power-button { z-index: 1; display: grid; place-items: center; width: clamp(168px, 60vw, 220px); height: clamp(168px, 60vw, 220px); border: none; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.26), rgba(255,211,84,.15)), linear-gradient(135deg, #ffefb0, #f4b700); color: #171717; box-shadow: 0 20px 40px rgba(247,197,74,.42), inset 0 4px 20px rgba(255,255,255,.44); transition: transform 180ms ease, box-shadow 180ms ease; user-select: none; }
+.power-button { z-index: 1; display: grid; place-items: center; width: clamp(168px, 60vw, 220px); height: clamp(168px, 60vw, 220px); border: none; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.26), rgba(255,211,84,.15)), linear-gradient(135deg, #ffefb0, #f4b700); color: #171717; box-shadow: 0 20px 40px rgba(247,197,74,.42), inset 0 4px 20px rgba(255,255,255,.44); transition: transform 180ms ease, box-shadow 180ms ease; user-select: none; touch-action: manipulation; cursor: pointer; }
 .power-button svg { width: 76px; height: 76px; stroke-width: 1.5; }
 .power-button:active { transform: scale(.98); }
 body.torch-on .power-button { box-shadow: 0 0 0 16px rgba(255,228,145,.18), 0 0 48px rgba(255,220,104,.65); }
 .controls-panel { width: min(100%, 420px); padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 20px; background: var(--panel-strong); border-radius: 24px; border: 1px solid rgba(255,255,255,.08); transition: opacity 160ms ease, transform 160ms ease; }
 .mode-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.mode-btn { display: grid; place-items: center; min-height: 52px; border: 1px solid rgba(255,255,255,.08); border-radius: 15px; background: rgba(255,255,255,.05); color: var(--text); }
+.mode-btn { display: grid; place-items: center; min-height: 52px; border: 1px solid rgba(255,255,255,.08); border-radius: 15px; background: rgba(255,255,255,.05); color: var(--text); touch-action: manipulation; cursor: pointer; }
 .mode-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: #181818; }
 .slider-wrap { display: grid; gap: 10px; color: var(--text); }
 .slider-heading { display: flex; align-items: center; gap: 9px; font-size: .94rem; }
 .slider-heading svg { width: 21px; height: 21px; color: var(--accent); }
 .slider-heading strong { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
-.slider-wrap input { width: 100%; accent-color: var(--accent); }
+.slider-wrap input { width: 100%; min-height: 28px; accent-color: var(--accent); touch-action: pan-x; }
 .utility-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .utility-btn { width: 100%; min-height: 48px; }
 .utility-btn[aria-pressed="true"] { background: rgba(255,216,102,.2); outline: 1px solid var(--accent); color: var(--accent-strong); }
