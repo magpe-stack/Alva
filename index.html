@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#070b12" />
+    <meta name="description" content="Alva — lanterna PWA com flash, SOS, strobe, tema escuro e instalação mobile." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Alva" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
+    <title>Alva</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">A</div>
+          <div>
+            <p class="eyebrow">Lanterna PWA</p>
+            <h1>Alva</h1>
+          </div>
+        </div>
+        <button id="installBtn" class="ghost-button hidden" type="button">Instalar</button>
+      </header>
+
+      <main class="scene" aria-live="polite">
+        <div class="torch-glow" aria-hidden="true"></div>
+
+        <div class="status-card">
+          <p class="status-label">Status</p>
+          <h2 id="statusText">Desligada</h2>
+          <div class="status-meta">
+            <span id="deviceStatus">Flash: aguardando</span>
+          </div>
+        </div>
+
+        <button id="powerBtn" class="power-button" type="button" aria-label="Ligar ou desligar lanterna">
+          <span class="power-icon">◉</span>
+        </button>
+
+        <div class="controls-panel">
+          <div class="mode-group" aria-label="Escolha o modo da lanterna">
+            <button class="mode-btn active" data-mode="torch" type="button">Lanterna</button>
+            <button class="mode-btn" data-mode="sos" type="button">SOS</button>
+            <button class="mode-btn" data-mode="strobe" type="button">Strobe</button>
+          </div>
+
+          <label class="slider-wrap" for="intensityRange">
+            <span>Intensidade</span>
+            <input id="intensityRange" type="range" min="10" max="100" value="85" />
+            <strong id="brightnessValue">85%</strong>
+          </label>
+
+          <div class="utility-row">
+            <button id="themeToggle" class="utility-btn" type="button">Tema escuro</button>
+            <button id="vibrateBtn" class="utility-btn" type="button">Vibração</button>
+            <button id="soundBtn" class="utility-btn" type="button">Som</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
