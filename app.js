@@ -1,3 +1,5 @@
+const AUTO_OFF_DELAY_MS = 60_000;
+
 const appState = {
   isOn: false,
   mode: 'torch',
@@ -8,6 +10,7 @@ const appState = {
   audioContext: null,
   wakeLockEnabled: false,
   wakeLock: null,
+  autoOffTimer: null,
   strobeInterval: null,
   sosInterval: null,
   lastTapAt: 0,
@@ -100,6 +103,24 @@ function setControlsHidden(hidden) {
   els.body.classList.toggle('controls-hidden', hidden);
 }
 
+function clearAutoOffTimer() {
+  if (appState.autoOffTimer !== null) {
+    window.clearTimeout(appState.autoOffTimer);
+    appState.autoOffTimer = null;
+  }
+}
+
+function scheduleAutoOff() {
+  clearAutoOffTimer();
+  if (!appState.isOn || appState.wakeLockEnabled) return;
+
+  appState.autoOffTimer = window.setTimeout(() => {
+    appState.autoOffTimer = null;
+    setPowerState(false);
+    showToast('Lanterna desligada após 1 minuto.');
+  }, AUTO_OFF_DELAY_MS);
+}
+
 function stopModes() {
   if (appState.strobeInterval !== null) window.clearInterval(appState.strobeInterval);
   if (appState.sosInterval !== null) window.clearInterval(appState.sosInterval);
@@ -114,7 +135,11 @@ function setPowerState(on) {
   els.powerBtn.setAttribute('aria-label', on ? 'Desligar lanterna' : 'Ligar lanterna');
   els.powerBtn.title = on ? 'Desligar lanterna' : 'Ligar lanterna';
   setControlsHidden(on);
-  if (!on) stopModes();
+  if (on) scheduleAutoOff();
+  else {
+    clearAutoOffTimer();
+    stopModes();
+  }
 }
 
 function startStrobe() {
@@ -169,14 +194,17 @@ async function requestWakeLock() {
   if (!appState.wakeLockEnabled || document.visibilityState !== 'visible') return;
   try {
     appState.wakeLock = await navigator.wakeLock.request('screen');
+    clearAutoOffTimer();
     appState.wakeLock.addEventListener('release', () => {
       appState.wakeLock = null;
+      if (appState.wakeLockEnabled) scheduleAutoOff();
     }, { once: true });
   } catch (error) {
     appState.wakeLockEnabled = false;
     els.wakeLockBtn.setAttribute('aria-pressed', 'false');
     els.wakeLockBtn.setAttribute('aria-label', 'Manter tela ligada');
     els.wakeLockBtn.title = 'Manter tela ligada';
+    scheduleAutoOff();
     showToast('Não foi possível manter a tela ligada.');
   }
 }
@@ -189,6 +217,7 @@ async function setWakeLockEnabled(enabled) {
   if (!enabled) {
     if (appState.wakeLock) await appState.wakeLock.release();
     appState.wakeLock = null;
+    scheduleAutoOff();
     return;
   }
   if (!('wakeLock' in navigator)) {
@@ -196,6 +225,7 @@ async function setWakeLockEnabled(enabled) {
     els.wakeLockBtn.setAttribute('aria-pressed', 'false');
     els.wakeLockBtn.setAttribute('aria-label', 'Manter tela ligada');
     els.wakeLockBtn.title = 'Manter tela ligada';
+    scheduleAutoOff();
     showToast('Manter tela ligada não está disponível.');
     return;
   }

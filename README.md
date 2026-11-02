@@ -8,13 +8,13 @@ O nome homenageia Thomas Alva Edison, inventor associado à popularização da i
 
 ## Como usar
 
-- **Botão grande de energia:** toque para ligar ou desligar a luz da tela. Ao ligar, os controles recolhem para destacar a luz. Toque duas vezes rapidamente numa área livre para mostrá-los de novo.
+- **Botão grande de energia:** toque para ligar ou desligar a luz da tela. Se a opção “Manter tela ligada” estiver desligada, a lanterna se desliga automaticamente após 1 minuto. Ao ligar, os controles recolhem para destacar a luz. Toque duas vezes rapidamente numa área livre para mostrá-los de novo.
 - **Ícones de modo:** lanterna mantém a tela acesa; SOS repete um padrão luminoso; strobe pisca em intervalos regulares. Selecione o modo e toque no botão grande para iniciar/parar.
 - **Controle de intensidade:** arraste o deslizador para ajustar a luz da tela. O percentual mostra o nível escolhido.
 - **Vibração (celular vibrando):** ativa/desativa o retorno tátil, que acompanha a ativação e os modos luminosos.
 - **Som (alto-falante):** ativa/desativa tons de confirmação e os sons dos modos SOS/Strobe.
 - **Luz vermelha (sol):** alterna a cor da iluminação para vermelho, útil para reduzir a luz branca em ambientes escuros.
-- **Manter tela ligada (celular):** impede que a tela apague automaticamente enquanto o recurso estiver ativado. O sistema pode liberá-lo quando o app fica em segundo plano; ao retornar, Alva tenta reativá-lo.
+- **Manter tela ligada (celular):** enquanto ativado, Alva solicita que a tela permaneça ligada e cancela o desligamento automático da lanterna. Se desativado durante o uso, inicia a contagem de 1 minuto. O sistema pode liberar esse recurso quando o app fica em segundo plano; ao retornar, Alva tenta reativá-lo.
 - **Indicador de rede:** verde indica que o aparelho reporta conexão à internet; vermelho indica offline.
 - **Instalar (download):** quando disponível, adiciona Alva à tela inicial.
 - **Sair (porta):** tenta fechar a janela. Se o navegador não permitir, encerre pelo seletor de aplicativos do aparelho.
@@ -29,6 +29,7 @@ Abra Alva no Chrome e escolha a opção de instalar/adicionar à tela inicial. A
 
 - **Luz não aparece:** toque no botão grande e ajuste a intensidade para cima.
 - **Controles ocultos:** dê dois toques rápidos na mesma área livre da tela.
+- **Lanterna desliga após um minuto:** ative o ícone “Manter tela ligada” antes ou durante o uso para cancelar o temporizador. Se o sistema não conseguir manter a tela ativa, o temporizador é aplicado como proteção.
 - **Sem vibração:** ative o ícone de vibração e confira as configurações de vibração e economia de energia do aparelho.
 - **Sem som:** ative o alto-falante, aumente o volume de mídia e confira o modo silencioso e a saída de áudio selecionada.
 - **Tela apagando:** ative “manter tela ligada”; se o app for para segundo plano, volte ao Alva para ele solicitar novamente o bloqueio de tela.
