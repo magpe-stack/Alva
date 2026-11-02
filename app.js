@@ -4,7 +4,7 @@ const appState = {
   intensity: 85,
   installPrompt: null,
   vibrationEnabled: false,
-  soundEnabled: false,
+  soundEnabled: true,
   audioContext: null,
   strobeInterval: null,
   sosInterval: null,
@@ -63,16 +63,17 @@ function getAudioContext() {
 }
 
 async function playTone(frequency = 660, duration = 180) {
+  if (!appState.soundEnabled) return false;
   const context = getAudioContext();
   if (!context) return false;
   try {
-    if (context.state === 'suspended') await context.resume();
+    if (context.state !== 'running') await context.resume();
     const oscillator = context.createOscillator();
     const gain = context.createGain();
     oscillator.type = 'sine';
     oscillator.frequency.value = frequency;
     gain.gain.setValueAtTime(0.0001, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.16, context.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.2, context.currentTime + 0.02);
     gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration / 1000);
     oscillator.connect(gain);
     gain.connect(context.destination);
@@ -87,9 +88,7 @@ async function playTone(frequency = 660, duration = 180) {
 
 function playPattern(frequencies) {
   frequencies.forEach((frequency, index) => {
-    window.setTimeout(() => {
-      if (appState.soundEnabled) playTone(frequency, 170);
-    }, index * 220);
+    window.setTimeout(() => playTone(frequency, 170), index * 220);
   });
 }
 
@@ -122,7 +121,7 @@ function startStrobe() {
     els.body.classList.toggle('strobe-off', !visible);
     if (visible) {
       vibrateAction(40);
-      if (appState.soundEnabled) playTone(780, 70);
+      playTone(780, 70);
     }
   }, 500);
 }
@@ -136,7 +135,7 @@ function startSOS() {
     els.body.classList.toggle('strobe-off', !visible);
     if (visible) {
       vibrateAction(35);
-      if (appState.soundEnabled) playTone(660, 100);
+      playTone(660, 100);
     }
     index += 1;
   }, 350);
@@ -150,13 +149,15 @@ function applyMode() {
   if (appState.mode === 'strobe') startStrobe();
 }
 
-function toggleTorch() {
+async function toggleTorch() {
   if (appState.isOn) {
     setPowerState(false);
+    await playTone(440, 130);
     return;
   }
   setPowerState(true);
   vibrateAction(80);
+  await playTone(660, 150);
   applyMode();
 }
 
@@ -202,23 +203,27 @@ function bindControls() {
     appState.vibrationEnabled = !appState.vibrationEnabled;
     els.vibrateBtn.setAttribute('aria-pressed', String(appState.vibrationEnabled));
     els.vibrateBtn.setAttribute('aria-label', appState.vibrationEnabled ? 'Desativar vibração' : 'Ativar vibração');
-    els.vibrateBtn.title = appState.vibrationEnabled ? 'Desativar vibração' : 'Ativar vibração';
+    els.vibrateBtn.title = appState.vibrationEnabled ? 'Desativar vibração' : 'Vibração';
     navigator.vibrate(appState.vibrationEnabled ? [120, 60, 120] : 0);
   });
 
   els.soundBtn.addEventListener('click', async () => {
-    const context = getAudioContext();
-    if (!context) {
-      showToast('Som indisponível neste navegador.');
-      return;
-    }
     appState.soundEnabled = !appState.soundEnabled;
     els.soundBtn.setAttribute('aria-pressed', String(appState.soundEnabled));
     els.soundBtn.setAttribute('aria-label', appState.soundEnabled ? 'Desativar som' : 'Ativar som');
-    els.soundBtn.title = appState.soundEnabled ? 'Desativar som' : 'Ativar som';
+    els.soundBtn.title = appState.soundEnabled ? 'Desativar som' : 'Som';
     if (appState.soundEnabled) {
+      const context = getAudioContext();
+      if (!context) {
+        appState.soundEnabled = false;
+        els.soundBtn.setAttribute('aria-pressed', 'false');
+        els.soundBtn.setAttribute('aria-label', 'Ativar som');
+        els.soundBtn.title = 'Som';
+        showToast('Som indisponível neste navegador.');
+        return;
+      }
       try {
-        if (context.state === 'suspended') await context.resume();
+        if (context.state !== 'running') await context.resume();
         playPattern([523, 659, 784]);
       } catch (error) {
         appState.soundEnabled = false;
@@ -240,7 +245,6 @@ function bindControls() {
   document.addEventListener('pointerup', handleDoubleTap);
   window.addEventListener('online', updateNetworkStatus);
   window.addEventListener('offline', updateNetworkStatus);
-
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     appState.installPrompt = event;
