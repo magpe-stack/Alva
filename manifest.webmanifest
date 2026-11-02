@@ -1,25 +1,15 @@
 {
   "name": "Alva",
   "short_name": "Alva",
-  "description": "Lanterna PWA com flash, SOS, strobe, vibração e modo noturno.",
+  "description": "Lanterna de tela PWA com modos SOS, strobe, vibração e som.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#070b12",
   "theme_color": "#070b12",
-  "orientation": "portrait",
+  "orientation": "any",
   "icons": [
-    {
-      "src": "./icons/icon-192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    { "src": "./icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "./icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }

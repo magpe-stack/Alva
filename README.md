@@ -1,36 +1,15 @@
 # Alva
 
-PWA de lanterna com foco em mobile first. Inclui:
+PWA mobile-first de lanterna de tela com modos SOS e strobe, controles de intensidade, vibração e som, instalação e uso offline.
 
-- botão principal para ligar/desligar
-- intensidade de brilho
-- modo SOS
-- modo strobe
-- tema escuro e claro
-- vibração e som
-- instalação como app
-- suporte offline via service worker
-- suporte a tela em portrait e landscape
+## Limitações de hardware no navegador
 
-## Como usar
+- O flash traseiro da câmera foi removido: o Chrome no dispositivo testado apenas acendia o indicador de uso da câmera, sem acender o LED traseiro. A API web de lanterna depende de suporte específico do navegador e do aparelho, então não é oferecida por esta versão.
+- A lanterna usa uma camada clara na própria tela. O controle muda a intensidade visual dessa camada; navegadores não fornecem controle universal do brilho físico do painel.
+- A API `ProximitySensor` não é suportada no Chrome para Android/PWA; não há sensor de proximidade funcional nesta versão. Os sensores foram removidos em vez de simulados.
+- Vibração usa a API `navigator.vibrate` quando o navegador/aparelho permite. O botão ativa/desativa o recurso e dá uma confirmação tátil.
+- Som usa Web Audio, iniciado por toque no botão para respeitar as regras de reprodução do navegador. O botão ativa/desativa o som e toca uma breve confirmação.
 
-1. Abra o projeto em um servidor local HTTPS ou em localhost.
-2. Acesse `index.html` pelo navegador.
-3. Permita acesso à câmera quando solicitado para tentar usar o flash da câmera.
+## Uso
 
-## Observações sobre flash
-
-O flash da câmera só funciona em navegadores e dispositivos que expõem a API `torch` do `MediaStreamTrack`, o que normalmente é suportado em Android + Chrome/Edge. Em muitos outros navegadores ou plataformas, a lanterna cai para a simulação visual da tela por segurança e compatibilidade.
-
-## Instalação
-
-- O navegador pode mostrar um botão “Instalar” quando a web app está em um ambiente seguro.
-- Em dispositivos iPhone/iPad, a instalação costuma aparecer via o menu de compartilhamento do Safari.
-
-## Desenvolvimento
-
-- `index.html`: estrutura da interface
-- `style.css`: visual mobile first
-- `app.js`: lógica do flash, modos, vibração, som e PWA
-- `manifest.webmanifest`: instalação do app
-- `sw.js`: suporte offline
+Sirva os arquivos em HTTPS ou localhost para permitir instalação e service worker. No Chrome Android, após atualização, feche e reabra o PWA para carregar a nova versão. Se ainda aparecer a versão antiga, limpe os dados do site/cache do app e instale novamente.
