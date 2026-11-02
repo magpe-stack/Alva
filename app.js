@@ -8,37 +8,44 @@ const appState = {
   audioContext: null,
   strobeInterval: null,
   sosInterval: null,
+  lastTapAt: 0,
+  lastTapPoint: null,
+  toastTimeout: null,
 };
 
 const els = {
   body: document.body,
   powerBtn: document.getElementById('powerBtn'),
   statusText: document.getElementById('statusText'),
-  deviceStatus: document.getElementById('deviceStatus'),
+  networkStatus: document.getElementById('networkStatus'),
   installBtn: document.getElementById('installBtn'),
+  exitBtn: document.getElementById('exitBtn'),
   intensityRange: document.getElementById('intensityRange'),
   brightnessValue: document.getElementById('brightnessValue'),
   vibrateBtn: document.getElementById('vibrateBtn'),
   soundBtn: document.getElementById('soundBtn'),
+  toast: document.getElementById('toast'),
   modeButtons: [...document.querySelectorAll('.mode-btn')],
 };
 
 function updateStatusText() {
-  if (!appState.isOn) {
-    els.statusText.textContent = 'Desligada';
-  } else if (appState.mode === 'sos') {
-    els.statusText.textContent = 'Modo SOS';
-  } else if (appState.mode === 'strobe') {
-    els.statusText.textContent = 'Strobe';
-  } else {
-    els.statusText.textContent = 'Ligada';
-  }
+  if (!appState.isOn) els.statusText.textContent = 'Desligada';
+  else if (appState.mode === 'sos') els.statusText.textContent = 'Modo SOS';
+  else if (appState.mode === 'strobe') els.statusText.textContent = 'Strobe';
+  else els.statusText.textContent = 'Ligada';
+}
+
+function updateNetworkStatus() {
+  const online = navigator.onLine;
+  els.networkStatus.classList.toggle('online', online);
+  els.networkStatus.classList.toggle('offline', !online);
+  const label = online ? 'Internet online' : 'Internet offline';
+  els.networkStatus.setAttribute('aria-label', label);
+  els.networkStatus.title = label;
 }
 
 function updateIntensityLabel() {
   els.brightnessValue.textContent = `${appState.intensity}%`;
-  // Controla a luz desenhada na tela. A Web não consegue definir o brilho
-  // físico do painel do celular de forma compatível entre navegadores.
   els.body.style.setProperty('--torch-strength', (appState.intensity / 100).toFixed(2));
 }
 
@@ -59,7 +66,6 @@ function getAudioContext() {
 async function playTone(frequency = 660, duration = 180) {
   const context = getAudioContext();
   if (!context) return false;
-
   try {
     if (context.state === 'suspended') await context.resume();
     const oscillator = context.createOscillator();
@@ -93,12 +99,18 @@ function stopModes() {
   if (appState.sosInterval) window.clearInterval(appState.sosInterval);
   appState.strobeInterval = null;
   appState.sosInterval = null;
-  els.body.classList.remove('torch-on', 'strobe-off');
+  els.body.classList.remove('strobe-off');
+}
+
+function setControlsHidden(hidden) {
+  els.body.classList.toggle('controls-hidden', hidden);
 }
 
 function setPowerState(nextState) {
   appState.isOn = nextState;
   els.body.classList.toggle('torch-on', nextState);
+  if (nextState) setControlsHidden(true);
+  else setControlsHidden(false);
   updateStatusText();
   if (!nextState) stopModes();
 }
@@ -118,7 +130,6 @@ function startStrobe() {
 
 function startSOS() {
   if (appState.sosInterval) return;
-  // SOS visual em pulsos lentos, sem alegar que é um sinal de emergência certificado.
   const sequence = [true, false, true, false, true, false, false, true, false, true, false, true, false, false, true, false, true, false, true, false, false];
   let index = 0;
   appState.sosInterval = window.setInterval(() => {
@@ -132,42 +143,59 @@ function startSOS() {
   }, 350);
 }
 
-async function toggleTorch() {
+function toggleTorch() {
   if (appState.isOn) {
     setPowerState(false);
     return;
   }
-
   setPowerState(true);
   vibrateAction(80);
   if (appState.mode === 'sos') startSOS();
   if (appState.mode === 'strobe') startStrobe();
 }
 
+function showToast(message) {
+  els.toast.textContent = message;
+  els.toast.classList.add('visible');
+  window.clearTimeout(appState.toastTimeout);
+  appState.toastTimeout = window.setTimeout(() => els.toast.classList.remove('visible'), 3500);
+}
+
+function handleDoubleTap(event) {
+  if (!appState.isOn || event.target.closest('button, input, a')) return;
+  const now = Date.now();
+  const point = { x: event.clientX, y: event.clientY };
+  const closeToLastTap = appState.lastTapPoint && Math.hypot(point.x - appState.lastTapPoint.x, point.y - appState.lastTapPoint.y) < 48;
+  if (now - appState.lastTapAt < 360 && closeToLastTap) {
+    setControlsHidden(false);
+    appState.lastTapAt = 0;
+    appState.lastTapPoint = null;
+    return;
+  }
+  appState.lastTapAt = now;
+  appState.lastTapPoint = point;
+}
+
 function bindControls() {
   els.powerBtn.addEventListener('click', toggleTorch);
-
   els.intensityRange.addEventListener('input', (event) => {
     appState.intensity = Number(event.target.value);
     updateIntensityLabel();
   });
-
   els.vibrateBtn.addEventListener('click', () => {
     if (typeof navigator.vibrate !== 'function') {
-      els.vibrateBtn.textContent = 'Vibração indisponível';
+      showToast('Vibração indisponível neste dispositivo.');
       return;
     }
     appState.vibrationEnabled = !appState.vibrationEnabled;
     els.vibrateBtn.setAttribute('aria-pressed', String(appState.vibrationEnabled));
     els.vibrateBtn.textContent = appState.vibrationEnabled ? 'Vibração: ligada' : 'Vibração: desligada';
-    if (appState.vibrationEnabled) navigator.vibrate([120, 60, 120]);
-    else navigator.vibrate(0);
+    navigator.vibrate(appState.vibrationEnabled ? [120, 60, 120] : 0);
   });
-
   els.soundBtn.addEventListener('click', async () => {
     const context = getAudioContext();
     if (!context) {
-      els.soundBtn.textContent = 'Som indisponível';
+      showToast('Som indisponível neste navegador.');
       return;
     }
     appState.soundEnabled = !appState.soundEnabled;
@@ -180,12 +208,11 @@ function bindControls() {
       } catch (error) {
         appState.soundEnabled = false;
         els.soundBtn.setAttribute('aria-pressed', 'false');
-        els.soundBtn.textContent = 'Som: indisponível';
-        console.warn('Não foi possível iniciar o áudio:', error);
+        els.soundBtn.textContent = 'Som: desligado';
+        showToast('Não foi possível ativar o som.');
       }
     }
   });
-
   els.modeButtons.forEach((button) => {
     button.addEventListener('click', () => {
       appState.mode = button.dataset.mode;
@@ -194,18 +221,23 @@ function bindControls() {
         item.classList.toggle('active', active);
         item.setAttribute('aria-pressed', String(active));
       });
-      const wasOn = appState.isOn;
-      setPowerState(false);
-      if (wasOn) toggleTorch();
+      updateStatusText();
     });
   });
-
+  els.exitBtn.addEventListener('click', () => {
+    window.close();
+    window.setTimeout(() => {
+      if (!window.closed) showToast('Para sair, feche o app pelo seletor de aplicativos do celular.');
+    }, 250);
+  });
+  document.addEventListener('pointerup', handleDoubleTap);
+  window.addEventListener('online', updateNetworkStatus);
+  window.addEventListener('offline', updateNetworkStatus);
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     appState.installPrompt = event;
     els.installBtn.classList.remove('hidden');
   });
-
   els.installBtn.addEventListener('click', async () => {
     if (!appState.installPrompt) return;
     appState.installPrompt.prompt();
@@ -225,6 +257,7 @@ function initialize() {
   bindControls();
   updateIntensityLabel();
   updateStatusText();
+  updateNetworkStatus();
   registerServiceWorker();
 }
 
