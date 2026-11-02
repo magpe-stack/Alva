@@ -16,7 +16,6 @@ const appState = {
 const els = {
   body: document.body,
   powerBtn: document.getElementById('powerBtn'),
-  statusText: document.getElementById('statusText'),
   networkStatus: document.getElementById('networkStatus'),
   installBtn: document.getElementById('installBtn'),
   exitBtn: document.getElementById('exitBtn'),
@@ -27,13 +26,6 @@ const els = {
   toast: document.getElementById('toast'),
   modeButtons: [...document.querySelectorAll('.mode-btn')],
 };
-
-function updateStatusText() {
-  if (!appState.isOn) els.statusText.textContent = 'Desligada';
-  else if (appState.mode === 'sos') els.statusText.textContent = 'Modo SOS';
-  else if (appState.mode === 'strobe') els.statusText.textContent = 'Strobe';
-  else els.statusText.textContent = 'Ligada';
-}
 
 function updateNetworkStatus() {
   const online = navigator.onLine;
@@ -94,6 +86,10 @@ function playPattern(frequencies) {
   });
 }
 
+function setControlsHidden(hidden) {
+  els.body.classList.toggle('controls-hidden', hidden);
+}
+
 function stopModes() {
   if (appState.strobeInterval) window.clearInterval(appState.strobeInterval);
   if (appState.sosInterval) window.clearInterval(appState.sosInterval);
@@ -102,17 +98,16 @@ function stopModes() {
   els.body.classList.remove('strobe-off');
 }
 
-function setControlsHidden(hidden) {
-  els.body.classList.toggle('controls-hidden', hidden);
-}
-
 function setPowerState(nextState) {
   appState.isOn = nextState;
   els.body.classList.toggle('torch-on', nextState);
   if (nextState) setControlsHidden(true);
-  else setControlsHidden(false);
-  updateStatusText();
-  if (!nextState) stopModes();
+  else {
+    stopModes();
+    setControlsHidden(false);
+  }
+  els.powerBtn.setAttribute('aria-label', nextState ? 'Desligar lanterna' : 'Ligar lanterna');
+  els.powerBtn.title = nextState ? 'Desligar lanterna' : 'Ligar lanterna';
 }
 
 function startStrobe() {
@@ -143,6 +138,14 @@ function startSOS() {
   }, 350);
 }
 
+function applySelectedMode() {
+  stopModes();
+  if (!appState.isOn) return;
+  els.body.classList.add('torch-on');
+  if (appState.mode === 'sos') startSOS();
+  if (appState.mode === 'strobe') startStrobe();
+}
+
 function toggleTorch() {
   if (appState.isOn) {
     setPowerState(false);
@@ -150,8 +153,7 @@ function toggleTorch() {
   }
   setPowerState(true);
   vibrateAction(80);
-  if (appState.mode === 'sos') startSOS();
-  if (appState.mode === 'strobe') startStrobe();
+  applySelectedMode();
 }
 
 function showToast(message) {
@@ -165,8 +167,8 @@ function handleDoubleTap(event) {
   if (!appState.isOn || event.target.closest('button, input, a')) return;
   const now = Date.now();
   const point = { x: event.clientX, y: event.clientY };
-  const closeToLastTap = appState.lastTapPoint && Math.hypot(point.x - appState.lastTapPoint.x, point.y - appState.lastTapPoint.y) < 48;
-  if (now - appState.lastTapAt < 360 && closeToLastTap) {
+  const closeToLastTap = appState.lastTapPoint && Math.hypot(point.x - appState.lastTapPoint.x, point.y - appState.lastTapPoint.y) < 70;
+  if (now - appState.lastTapAt < 420 && closeToLastTap) {
     setControlsHidden(false);
     appState.lastTapAt = 0;
     appState.lastTapPoint = null;
@@ -182,6 +184,7 @@ function bindControls() {
     appState.intensity = Number(event.target.value);
     updateIntensityLabel();
   });
+
   els.vibrateBtn.addEventListener('click', () => {
     if (typeof navigator.vibrate !== 'function') {
       showToast('Vibração indisponível neste dispositivo.');
@@ -189,9 +192,10 @@ function bindControls() {
     }
     appState.vibrationEnabled = !appState.vibrationEnabled;
     els.vibrateBtn.setAttribute('aria-pressed', String(appState.vibrationEnabled));
-    els.vibrateBtn.textContent = appState.vibrationEnabled ? 'Vibração: ligada' : 'Vibração: desligada';
+    els.vibrateBtn.setAttribute('aria-label', appState.vibrationEnabled ? 'Desativar vibração' : 'Ativar vibração');
     navigator.vibrate(appState.vibrationEnabled ? [120, 60, 120] : 0);
   });
+
   els.soundBtn.addEventListener('click', async () => {
     const context = getAudioContext();
     if (!context) {
@@ -200,19 +204,20 @@ function bindControls() {
     }
     appState.soundEnabled = !appState.soundEnabled;
     els.soundBtn.setAttribute('aria-pressed', String(appState.soundEnabled));
-    els.soundBtn.textContent = appState.soundEnabled ? 'Som: ligado' : 'Som: desligado';
-    if (appState.soundEnabled) {
-      try {
+    els.soundBtn.setAttribute('aria-label', appState.soundEnabled ? 'Desativar som' : 'Ativar som');
+    try {
+      if (appState.soundEnabled) {
         if (context.state === 'suspended') await context.resume();
         playPattern([523, 659, 784]);
-      } catch (error) {
-        appState.soundEnabled = false;
-        els.soundBtn.setAttribute('aria-pressed', 'false');
-        els.soundBtn.textContent = 'Som: desligado';
-        showToast('Não foi possível ativar o som.');
       }
+    } catch (error) {
+      appState.soundEnabled = false;
+      els.soundBtn.setAttribute('aria-pressed', 'false');
+      els.soundBtn.setAttribute('aria-label', 'Ativar som');
+      showToast('Não foi possível ativar o som.');
     }
   });
+
   els.modeButtons.forEach((button) => {
     button.addEventListener('click', () => {
       appState.mode = button.dataset.mode;
@@ -221,15 +226,17 @@ function bindControls() {
         item.classList.toggle('active', active);
         item.setAttribute('aria-pressed', String(active));
       });
-      updateStatusText();
+      applySelectedMode();
     });
   });
+
   els.exitBtn.addEventListener('click', () => {
     window.close();
     window.setTimeout(() => {
-      if (!window.closed) showToast('Para sair, feche o app pelo seletor de aplicativos do celular.');
+      if (!window.closed) showToast('Feche o Alva pelo seletor de aplicativos do celular.');
     }, 250);
   });
+
   document.addEventListener('pointerup', handleDoubleTap);
   window.addEventListener('online', updateNetworkStatus);
   window.addEventListener('offline', updateNetworkStatus);
@@ -256,7 +263,6 @@ function registerServiceWorker() {
 function initialize() {
   bindControls();
   updateIntensityLabel();
-  updateStatusText();
   updateNetworkStatus();
   registerServiceWorker();
 }
