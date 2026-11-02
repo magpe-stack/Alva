@@ -6,6 +6,8 @@ const appState = {
   vibrationEnabled: false,
   soundEnabled: true,
   audioContext: null,
+  wakeLockEnabled: false,
+  wakeLock: null,
   strobeInterval: null,
   sosInterval: null,
   lastTapAt: 0,
@@ -23,6 +25,8 @@ const els = {
   brightnessValue: document.getElementById('brightnessValue'),
   vibrateBtn: document.getElementById('vibrateBtn'),
   soundBtn: document.getElementById('soundBtn'),
+  redLightBtn: document.getElementById('redLightBtn'),
+  wakeLockBtn: document.getElementById('wakeLockBtn'),
   toast: document.getElementById('toast'),
   modeButtons: [...document.querySelectorAll('.mode-btn')],
 };
@@ -161,6 +165,43 @@ async function toggleTorch() {
   applyMode();
 }
 
+async function requestWakeLock() {
+  if (!appState.wakeLockEnabled || document.visibilityState !== 'visible') return;
+  try {
+    appState.wakeLock = await navigator.wakeLock.request('screen');
+    appState.wakeLock.addEventListener('release', () => {
+      appState.wakeLock = null;
+    }, { once: true });
+  } catch (error) {
+    appState.wakeLockEnabled = false;
+    els.wakeLockBtn.setAttribute('aria-pressed', 'false');
+    els.wakeLockBtn.setAttribute('aria-label', 'Manter tela ligada');
+    els.wakeLockBtn.title = 'Manter tela ligada';
+    showToast('Não foi possível manter a tela ligada.');
+  }
+}
+
+async function setWakeLockEnabled(enabled) {
+  appState.wakeLockEnabled = enabled;
+  els.wakeLockBtn.setAttribute('aria-pressed', String(enabled));
+  els.wakeLockBtn.setAttribute('aria-label', enabled ? 'Desativar tela sempre ligada' : 'Manter tela ligada');
+  els.wakeLockBtn.title = enabled ? 'Desativar tela sempre ligada' : 'Manter tela ligada';
+  if (!enabled) {
+    if (appState.wakeLock) await appState.wakeLock.release();
+    appState.wakeLock = null;
+    return;
+  }
+  if (!('wakeLock' in navigator)) {
+    appState.wakeLockEnabled = false;
+    els.wakeLockBtn.setAttribute('aria-pressed', 'false');
+    els.wakeLockBtn.setAttribute('aria-label', 'Manter tela ligada');
+    els.wakeLockBtn.title = 'Manter tela ligada';
+    showToast('Manter tela ligada não está disponível.');
+    return;
+  }
+  await requestWakeLock();
+}
+
 function handleDoubleTap(event) {
   if (!appState.isOn || event.target.closest('button, input, a')) return;
   const now = Date.now();
@@ -211,14 +252,12 @@ function bindControls() {
     appState.soundEnabled = !appState.soundEnabled;
     els.soundBtn.setAttribute('aria-pressed', String(appState.soundEnabled));
     els.soundBtn.setAttribute('aria-label', appState.soundEnabled ? 'Desativar som' : 'Ativar som');
-    els.soundBtn.title = appState.soundEnabled ? 'Desativar som' : 'Som';
+    els.soundBtn.title = appState.soundEnabled ? 'Som ligado' : 'Ativar som';
     if (appState.soundEnabled) {
       const context = getAudioContext();
       if (!context) {
         appState.soundEnabled = false;
         els.soundBtn.setAttribute('aria-pressed', 'false');
-        els.soundBtn.setAttribute('aria-label', 'Ativar som');
-        els.soundBtn.title = 'Som';
         showToast('Som indisponível neste navegador.');
         return;
       }
@@ -228,11 +267,22 @@ function bindControls() {
       } catch (error) {
         appState.soundEnabled = false;
         els.soundBtn.setAttribute('aria-pressed', 'false');
-        els.soundBtn.setAttribute('aria-label', 'Ativar som');
-        els.soundBtn.title = 'Som';
         showToast('Não foi possível ativar o som.');
       }
     }
+  });
+
+  els.redLightBtn.addEventListener('click', () => {
+    const enabled = !els.body.classList.contains('red-light');
+    els.body.classList.toggle('red-light', enabled);
+    els.redLightBtn.setAttribute('aria-pressed', String(enabled));
+    els.redLightBtn.setAttribute('aria-label', enabled ? 'Desativar luz vermelha' : 'Ativar luz vermelha');
+    els.redLightBtn.title = enabled ? 'Desativar luz vermelha' : 'Luz vermelha';
+  });
+
+  els.wakeLockBtn.addEventListener('click', () => setWakeLockEnabled(!appState.wakeLockEnabled));
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') requestWakeLock();
   });
 
   els.exitBtn.addEventListener('click', () => {

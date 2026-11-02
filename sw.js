@@ -1,4 +1,4 @@
-const CACHE_NAME = 'alva-v8';
+const CACHE_NAME = 'alva-v9';
 const APP_SHELL = ['./', './index.html', './style.css', './app.js', './manifest.webmanifest', './icons/icon-192.svg', './icons/icon-512.svg'];
 
 self.addEventListener('install', (event) => {

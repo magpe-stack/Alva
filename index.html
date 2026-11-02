@@ -33,7 +33,7 @@
       </header>
       <main class="scene">
         <div class="torch-glow" aria-hidden="true"></div>
-        <button id="powerBtn" class="power-button" type="button" aria-label="Desligar lanterna" title="Desligar lanterna">
+        <button id="powerBtn" class="power-button" type="button" aria-label="Ligar lanterna" title="Ligar lanterna">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9m6.36-6.36a9 9 0 1 1-12.72 0" /></svg>
         </button>
         <section class="controls-panel" aria-label="Controles da lanterna">
@@ -46,9 +46,11 @@
             <span class="slider-heading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42M9 16h6l-1-2.5a4 4 0 1 0-4 0L9 16Zm1 2h4m-3 2h2" /></svg><span>Intensidade</span><strong id="brightnessValue">85%</strong></span>
             <input id="intensityRange" type="range" min="10" max="100" value="85" />
           </label>
-          <div class="utility-row">
+          <div class="utility-row" aria-label="Recursos adicionais">
             <button id="vibrateBtn" class="icon-button utility-btn" type="button" aria-label="Ativar vibração" title="Vibração" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V5Zm-4 2v10m16-10v10M1 9v6m22-6v6" /></svg></button>
-            <button id="soundBtn" class="icon-button utility-btn" type="button" aria-label="Desativar som" title="Desativar som" aria-pressed="true"><svg class="sound-off-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6" /></svg><svg class="sound-on-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Zm5 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" /></svg></button>
+            <button id="soundBtn" class="icon-button utility-btn" type="button" aria-label="Desativar som" title="Som" aria-pressed="true"><svg class="sound-off-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6" /></svg><svg class="sound-on-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Zm5 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" /></svg></button>
+            <button id="redLightBtn" class="icon-button utility-btn" type="button" aria-label="Ativar luz vermelha" title="Luz vermelha" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42" /><circle cx="12" cy="12" r="4" /></svg></button>
+            <button id="wakeLockBtn" class="icon-button utility-btn" type="button" aria-label="Manter tela ligada" title="Manter tela ligada" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2" /><path d="M10 5.5h4m-2 12v.01" /></svg></button>
           </div>
         </section>
       </main>

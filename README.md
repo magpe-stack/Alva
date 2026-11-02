@@ -1,44 +1,39 @@
 # Alva — Manual do usuário
 
-Alva é uma lanterna de tela para uso no celular. A tela ilumina em intensidade ajustável e oferece modos de luz, sinal SOS visual, vibração e som. O aplicativo pode ser instalado no aparelho e, depois do primeiro carregamento, usado sem conexão à internet.
+Alva é uma lanterna de tela para celular. A tela ilumina com intensidade ajustável e oferece modos Lanterna, SOS e Strobe, além de vibração, som, luz vermelha e opção para manter a tela ligada. Pode ser instalada no aparelho e usada offline depois do primeiro carregamento.
 
 ## Por que o nome Alva?
 
 O nome homenageia Thomas Alva Edison, inventor associado à popularização da iluminação elétrica. Alva representa a ideia de ter uma fonte de luz simples e sempre à mão.
 
-## Tela principal
+## Como usar
 
-- **Ícone de Wi-Fi no canto superior direito:** verde indica que o aparelho está conectado à internet; vermelho indica que está offline. O indicador mostra a conexão reportada pelo aparelho.
-- **Botão redondo de energia:** toque para ligar ou desligar a luz da tela. Quando ligada, a interface recolhe os controles para deixar a iluminação em destaque. Toque duas vezes rapidamente em uma área livre da tela para mostrar os controles novamente; depois use o botão redondo para desligar.
-- **Modos de luz:** escolha um dos três ícones antes ou durante o uso:
-  - **Lanterna (ícone de lanterna):** mantém a tela iluminada.
-  - **SOS (ícone de alerta):** repete um padrão visual SOS na tela.
-  - **Strobe (ícone de raio):** pisca a tela em intervalos regulares.
-- **Intensidade (ícone de sol e controle deslizante):** arraste para ajustar a força da luz da tela. O percentual aparece ao lado do ícone.
-- **Vibração (ícone de telefone vibrando):** toque para ativar ou desativar. Quando ativada, confirma a seleção com uma vibração e vibra ao ligar a luz e nos modos SOS/Strobe.
-- **Som (ícone de alto-falante):** toque para ativar ou desativar. Ao ativar, toca uma breve sequência de confirmação; com som ligado, os modos SOS e Strobe também emitem tons.
-- **Instalar (ícone de download):** quando o navegador oferecer a instalação, toque para adicionar Alva à tela inicial e abrir como aplicativo.
-- **Sair (ícone de porta):** tenta fechar a janela do app. Se o navegador não permitir, feche Alva pelo seletor de aplicativos do celular.
+- **Botão grande de energia:** toque para ligar ou desligar a luz da tela. Ao ligar, os controles recolhem para destacar a luz. Toque duas vezes rapidamente numa área livre para mostrá-los de novo.
+- **Ícones de modo:** lanterna mantém a tela acesa; SOS repete um padrão luminoso; strobe pisca em intervalos regulares. Selecione o modo e toque no botão grande para iniciar/parar.
+- **Controle de intensidade:** arraste o deslizador para ajustar a luz da tela. O percentual mostra o nível escolhido.
+- **Vibração (celular vibrando):** ativa/desativa o retorno tátil, que acompanha a ativação e os modos luminosos.
+- **Som (alto-falante):** ativa/desativa tons de confirmação e os sons dos modos SOS/Strobe.
+- **Luz vermelha (sol):** alterna a cor da iluminação para vermelho, útil para reduzir a luz branca em ambientes escuros.
+- **Manter tela ligada (celular):** impede que a tela apague automaticamente enquanto o recurso estiver ativado. O sistema pode liberá-lo quando o app fica em segundo plano; ao retornar, Alva tenta reativá-lo.
+- **Indicador de rede:** verde indica que o aparelho reporta conexão à internet; vermelho indica offline.
+- **Instalar (download):** quando disponível, adiciona Alva à tela inicial.
+- **Sair (porta):** tenta fechar a janela. Se o navegador não permitir, encerre pelo seletor de aplicativos do aparelho.
 
-Todos os botões usam ícones; mantenha o toque por um instante ou use leitor de tela para identificar suas descrições acessíveis. Os modos ativos ficam realçados.
+Os botões mostram ícones; use um toque longo ou leitor de tela para consultar a descrição acessível. Os recursos ativos ficam realçados.
 
 ## Instalar e usar offline
 
-1. Abra Alva no Chrome e use a opção de instalação oferecida pelo navegador (ou o ícone de instalação, se aparecer).
-2. Abra o app ao menos uma vez com conexão para carregar os arquivos necessários.
-3. Depois desse primeiro carregamento, a tela principal e os recursos de luz continuam disponíveis sem internet. O ícone de conexão muda quando o aparelho fica online ou offline.
+Abra Alva no Chrome e escolha a opção de instalar/adicionar à tela inicial. Abra o app ao menos uma vez com internet para carregar os arquivos. Depois, as funções principais de luz ficam disponíveis offline.
 
-## Problemas comuns e soluções
+## Soluções rápidas
 
-- **A luz não aparece:** toque no botão redondo para ligar. Se estiver em um ambiente muito claro, aumente a intensidade e aponte a tela para a área que deseja iluminar.
-- **Os controles desapareceram:** com a luz ligada, dê dois toques rápidos na mesma região livre da tela. Evite tocar em botões ou no controle deslizante.
-- **Não há vibração:** confira se Vibração está ativada e se a vibração do aparelho não está desativada nas configurações do sistema. Alguns modos de economia de energia podem limitar o recurso.
-- **Não ouço os tons:** toque no ícone do alto-falante para ativar o som; aumente o volume de mídia e verifique se o aparelho não está no silencioso ou conectado a um dispositivo de áudio diferente.
-- **O ícone de internet indica offline:** confira Wi-Fi ou dados móveis. A luz da tela pode continuar sendo usada offline após o primeiro carregamento.
-- **A instalação não aparece:** abra o menu do Chrome e escolha “Instalar app” ou “Adicionar à tela inicial”, se disponível. Confirme que o site terminou de carregar e tente novamente.
-- **A atualização ainda não apareceu:** feche e reabra o app. Se necessário, remova o app da tela inicial, limpe os dados do site no Chrome e instale-o novamente; abra uma vez online para atualizar os arquivos.
-- **O botão Sair não fecha a janela:** alguns navegadores não permitem que uma página feche a si mesma. Use o seletor de aplicativos do sistema para fechar o Alva.
+- **Luz não aparece:** toque no botão grande e ajuste a intensidade para cima.
+- **Controles ocultos:** dê dois toques rápidos na mesma área livre da tela.
+- **Sem vibração:** ative o ícone de vibração e confira as configurações de vibração e economia de energia do aparelho.
+- **Sem som:** ative o alto-falante, aumente o volume de mídia e confira o modo silencioso e a saída de áudio selecionada.
+- **Tela apagando:** ative “manter tela ligada”; se o app for para segundo plano, volte ao Alva para ele solicitar novamente o bloqueio de tela.
+- **App sem atualização:** feche e reabra. Se necessário, limpe os dados do site no Chrome e instale de novo; abra uma vez online.
 
-## Uso responsável
+## Cuidados
 
-Os modos SOS e Strobe são padrões luminosos exibidos na tela. Não substituem equipamentos de emergência. O modo Strobe pisca; interrompa o uso se causar desconforto ou sensibilidade à luz. O uso prolongado com intensidade alta pode consumir mais bateria.
+SOS e Strobe são padrões luminosos de tela e não substituem equipamentos de emergência. O Strobe pisca; interrompa se causar desconforto ou sensibilidade à luz. Intensidade alta e tela sempre ligada podem aumentar o consumo de bateria.
